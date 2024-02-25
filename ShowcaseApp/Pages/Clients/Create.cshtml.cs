@@ -4,65 +4,65 @@ using System.Data.SqlClient;
 
 namespace ShowcaseApp.Pages.Clients
 {
-    public class CreateModel : PageModel
-    {
-        public ClientInfo clientInfo = new ClientInfo();
-        public String errorMessage = "";
-        public String successMessage = "";
-        public void OnGet()
-        {
+	public class CreateModel : PageModel
+	{
+		public ClientInfo clientInfo = new ClientInfo();
+		public String errorMessage = "";
+		public String successMessage = "";
+		public void OnGet()
+		{
 
-        }
+		}
 
-        public void OnPost() 
-        { 
-            clientInfo.name = Request.Form["name"];
+		public void OnPost() 
+		{ 
+			clientInfo.name = Request.Form["name"];
 			clientInfo.email = Request.Form["email"];
 			clientInfo.phone = Request.Form["phone"];
 			clientInfo.address = Request.Form["address"];
 
-            if (clientInfo.name.Length == 0 || clientInfo.email.Length == 0 ||
-                clientInfo.phone.Length == 0 || clientInfo.address.Length == 0) 
-            {
-                errorMessage = "All the fields are required";
-                return;
-            }
+			if (clientInfo.name.Length == 0 || clientInfo.email.Length == 0 ||
+				clientInfo.phone.Length == 0 || clientInfo.address.Length == 0) 
+			{
+				errorMessage = "All the fields are required";
+				return;
+			}
 
-            // save new user into DB
-            try
-            {
+			// save new user into DB
+			try
+			{
 				String connectionString = "Data Source=LAPTOP-2D9MVHPM\\SQLEXPRESS01;Initial Catalog=ShowcaseDB;Integrated Security=True";
 				using (SqlConnection connection = new SqlConnection(connectionString))
 				{
 					connection.Open();
-                    String sql = "INSERT INTO users " +
-                        "(name, email, phone, address) VALUES " +
-                        "(@name, @email, @phone, @address);";
+					String sql = "INSERT INTO users " +
+						"(name, email, phone, address) VALUES " +
+						"(@name, @email, @phone, @address);";
 					using (SqlCommand command = new SqlCommand(sql, connection))
 					{
-                        command.Parameters.AddWithValue("@name", clientInfo.name);
-                        command.Parameters.AddWithValue("@email", clientInfo.email);
-                        command.Parameters.AddWithValue("@phone", clientInfo.phone);
+						command.Parameters.AddWithValue("@name", clientInfo.name);
+						command.Parameters.AddWithValue("@email", clientInfo.email);
+						command.Parameters.AddWithValue("@phone", clientInfo.phone);
 						command.Parameters.AddWithValue("@address", clientInfo.address);
 
-                        command.ExecuteNonQuery();
+						command.ExecuteNonQuery();
 					}
 				}
 
 			}
-            catch (Exception ex) 
-            {
-                errorMessage = ex.Message;
-                return;  
-            }
+			catch (Exception ex) 
+			{
+				errorMessage = ex.Message;
+				return;  
+			}
 
 			clientInfo.name = "";
 			clientInfo.email = "";
 			clientInfo.phone = "";
 			clientInfo.address = "";
-            successMessage = "New User Added Correctly";
+			successMessage = "New User Added Correctly";
 
-            Response.Redirect("/Clients/Index");
+			Response.Redirect("/Clients/Index");
 		}
-    }
+	}
 }
