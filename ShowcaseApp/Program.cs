@@ -1,7 +1,9 @@
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using ShowcaseApp.Areas.Identity.Data;
 using ShowcaseApp.Data;
+using ShowcaseApp.Data.Model;
+using ShowcaseApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("ShowcaseAppDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ShowcaseAppDbContextConnection' not found.");
@@ -10,13 +12,12 @@ builder.Services.AddDbContext<ShowcaseAppDbContext>(options => options.UseSqlSer
 
 builder.Services.AddDefaultIdentity<AplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ShowcaseAppDbContext>();
 
-// Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.Password.RequiredLength = 9;
-});
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<IClientService, ClientService>();
 
 var app = builder.Build();
 
@@ -33,8 +34,15 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapRazorPages();
+app.UseEndpoints(endpoints =>
+{
+	endpoints.MapRazorPages(); // Maps Razor Pages
+	endpoints.MapControllerRoute( // Maps controller actions
+		name: "default",
+		pattern: "{controller=Client}/{action=MyIndex}");
+});
 
 app.Run();

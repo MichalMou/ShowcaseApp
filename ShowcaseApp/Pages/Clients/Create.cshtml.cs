@@ -1,54 +1,41 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ShowcaseApp.Contollers;
+using ShowcaseApp.Data.Model;
+using ShowcaseApp.Services;
 using System.Data.SqlClient;
 
 namespace ShowcaseApp.Pages.Clients
 {
-	public class CreateModel : PageModel
+    public class CreateModel : PageModel
 	{
-		public ClientInfo clientInfo = new ClientInfo();
+		private readonly IClientService _clientService;
+		public Client client = new Client();
 		public String errorMessage = "";
 		public String successMessage = "";
-		public void OnGet()
-		{
 
+		public CreateModel(IClientService clientService)
+		{
+			_clientService = clientService;
 		}
 
-		public void OnPost() 
-		{ 
-			clientInfo.name = Request.Form["name"];
-			clientInfo.email = Request.Form["email"];
-			clientInfo.phone = Request.Form["phone"];
-			clientInfo.address = Request.Form["address"];
+		public async Task OnPost() 
+		{
+            client.name = Request.Form["name"];
+            client.email = Request.Form["email"];
+			client.phone = Request.Form["phone"];
+			client.address = Request.Form["address"];
 
-			if (clientInfo.name.Length == 0 || clientInfo.email.Length == 0 ||
-				clientInfo.phone.Length == 0 || clientInfo.address.Length == 0) 
+			if (client.name.Length == 0 || client.email.Length == 0 ||
+                client.phone.Length == 0 || client.address.Length == 0) 
 			{
 				errorMessage = "All the fields are required";
 				return;
 			}
 
-			// save new user into DB
 			try
 			{
-				String connectionString = "Data Source=LAPTOP-2D9MVHPM\\SQLEXPRESS01;Initial Catalog=ShowcaseDB;Integrated Security=True";
-				using (SqlConnection connection = new SqlConnection(connectionString))
-				{
-					connection.Open();
-					String sql = "INSERT INTO users " +
-						"(name, email, phone, address) VALUES " +
-						"(@name, @email, @phone, @address);";
-					using (SqlCommand command = new SqlCommand(sql, connection))
-					{
-						command.Parameters.AddWithValue("@name", clientInfo.name);
-						command.Parameters.AddWithValue("@email", clientInfo.email);
-						command.Parameters.AddWithValue("@phone", clientInfo.phone);
-						command.Parameters.AddWithValue("@address", clientInfo.address);
-
-						command.ExecuteNonQuery();
-					}
-				}
-
+				await _clientService.CreateClientAsync(client.name, client.phone, client.email, client.address);
 			}
 			catch (Exception ex) 
 			{
@@ -56,10 +43,10 @@ namespace ShowcaseApp.Pages.Clients
 				return;  
 			}
 
-			clientInfo.name = "";
-			clientInfo.email = "";
-			clientInfo.phone = "";
-			clientInfo.address = "";
+            client.name = "";
+            client.email = "";
+            client.phone = "";
+            client.address = "";
 			successMessage = "New User Added Correctly";
 
 			Response.Redirect("/Clients/Index");

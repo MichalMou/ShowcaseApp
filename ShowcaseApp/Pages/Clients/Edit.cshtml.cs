@@ -1,93 +1,66 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ShowcaseApp.Contollers;
+using ShowcaseApp.Data.Model;
+using ShowcaseApp.Services;
 using System.Data.SqlClient;
 
 namespace ShowcaseApp.Pages.Clients
 {
     public class EditModel : PageModel
-    {
-		public ClientInfo clientInfo = new ClientInfo();
-		public String errorMessage = "";
-		public String successMessage = "";
+	{
+		private readonly IClientService _clientService;
+		public Client Client = new Client();
+		public string ClientId { get; set; }
+		public string ErrorMessage = string.Empty;
+		public String successMessage = string.Empty;	
 
-		public void OnGet()
-        {
-            String id = Request.Query["id"];
+		public EditModel(IClientService clientService)
+		{
+			_clientService = clientService;
+		}
+
+		public async Task OnGetAsync()
+		{
+			ClientId = Request.Query["id"];
 
 			try
 			{
-				String connectionString = "Data Source=LAPTOP-2D9MVHPM\\SQLEXPRESS01;Initial Catalog=ShowcaseDB;Integrated Security=True";
-				using (SqlConnection connection = new SqlConnection(connectionString))
-				{
-					connection.Open();
-					String sql = "SELECT * FROM users WHERE id=@id";
-					using (SqlCommand command = new SqlCommand(sql, connection)) 
-					{
-						command.Parameters.AddWithValue("@id", id);
-						using (SqlDataReader reader = command.ExecuteReader())
-						{ 
-							if (reader.Read()) 
-							{
-								clientInfo.id = "" + reader.GetInt32(0);
-								clientInfo.name = reader.GetString(1);
-								clientInfo.email = reader.GetString(2);
-								clientInfo.phone = reader.GetString(3);
-								clientInfo.address = reader.GetString(4);
-							}
-						}
-					}
-				}
+				Client = await _clientService.GetClientsAsync(ClientId);
 			}
 			catch (Exception ex)
 			{
-				errorMessage = ex.Message;
+				ErrorMessage = ex.Message;
 				return;
 			}
 		}
 
-        public void OnPost()
-        {
-			clientInfo.id = Request.Form["id"];
-			clientInfo.name = Request.Form["name"];
-			clientInfo.email = Request.Form["email"];
-			clientInfo.phone = Request.Form["phone"];
-			clientInfo.address = Request.Form["address"];
+		public void OnPost()
+		{
+			Client.id = Request.Form["id"];
+			Client.name = Request.Form["name"];
+			Client.email = Request.Form["email"];
+			Client.phone = Request.Form["phone"];
+			Client.address = Request.Form["address"];
 
-			if (clientInfo.name.Length == 0 || clientInfo.email.Length == 0 ||
-			   clientInfo.phone.Length == 0 || clientInfo.address.Length == 0)
+			if (Client.name.Length == 0 || Client.email.Length == 0 ||
+			   Client.phone.Length == 0 || Client.address.Length == 0)
 			{
-				errorMessage = "All the fields are required";
+				ErrorMessage = "All the fields are required";
 				return;
 			}
 
 			try
 			{
-				String connectionString = "Data Source=LAPTOP-2D9MVHPM\\SQLEXPRESS01;Initial Catalog=ShowcaseDB;Integrated Security=True";
-				using (SqlConnection connection = new SqlConnection(connectionString))
-				{
-					connection.Open();
-					String sql = "UPDATE users " +
-						"SET name=@name, email=@email, phone=@phone, address=@address " +
-						"WHERE id=@id;";
-					using (SqlCommand command = new SqlCommand(sql, connection))
-					{
-						command.Parameters.AddWithValue("@name", clientInfo.name);
-						command.Parameters.AddWithValue("@email", clientInfo.email);
-						command.Parameters.AddWithValue("@phone", clientInfo.phone);
-						command.Parameters.AddWithValue("@address", clientInfo.address);
-						command.Parameters.AddWithValue("@id", clientInfo.id);
-
-						command.ExecuteNonQuery();
-					}
-				}
+				_clientService.UpdateClientAsync(Client.id, Client.name, Client.email, Client.phone, Client.address);
 			}
 			catch (Exception ex)
 			{
-				errorMessage = ex.Message;
+				ErrorMessage = ex.Message;
 				return;
 			}
 
 			Response.Redirect("/Clients/Index");
 		}    
-    }
+	}
 }

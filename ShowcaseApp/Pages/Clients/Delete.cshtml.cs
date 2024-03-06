@@ -1,26 +1,25 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using ShowcaseApp.Contollers;
 using ShowcaseApp.Data.Model;
 using ShowcaseApp.Services;
-using System.Data.Common;
-using System.Data.SqlClient;
 
 namespace ShowcaseApp.Pages.Clients
 {
-    public class IndexModel : PageModel
-	{
+    public class DeleteModel : PageModel
+    {
 		private readonly IClientService _clientService;
-		public IEnumerable<Client> ListClients { get; set; }
 
-		public IndexModel(IClientService clientService)
+		public DeleteModel(IClientService clientService)
 		{
 			_clientService = clientService;
 		}
-
 		public async Task OnGetAsync()
 		{
-			ListClients = await _clientService.GetAllClientsAsync();
+			String id = Request.Query["id"];
+
+			await _clientService.DeleteClientAsync(id);
+
+			Response.Redirect("/Clients/Index");
 		}
 	}
 }
