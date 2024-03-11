@@ -5,8 +5,8 @@ using ShowcaseApp.Services;
 
 namespace ShowcaseApp.Pages.Clients
 {
-    public class DeleteModel : PageModel
-    {
+	public class DeleteModel : PageModel
+	{
 		private readonly IClientService _clientService;
 
 		public DeleteModel(IClientService clientService)

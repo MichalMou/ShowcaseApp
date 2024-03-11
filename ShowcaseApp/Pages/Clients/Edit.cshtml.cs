@@ -7,13 +7,13 @@ using System.Data.SqlClient;
 
 namespace ShowcaseApp.Pages.Clients
 {
-    public class EditModel : PageModel
+	public class EditModel : PageModel
 	{
 		private readonly IClientService _clientService;
 		public Client Client = new Client();
 		public string ClientId { get; set; }
 		public string ErrorMessage = string.Empty;
-		public String successMessage = string.Empty;	
+		public String SuccessMessage = string.Empty;	
 
 		public EditModel(IClientService clientService)
 		{
@@ -37,14 +37,14 @@ namespace ShowcaseApp.Pages.Clients
 
 		public void OnPost()
 		{
-			Client.id = Request.Form["id"];
-			Client.name = Request.Form["name"];
-			Client.email = Request.Form["email"];
-			Client.phone = Request.Form["phone"];
-			Client.address = Request.Form["address"];
+			Client.Id = Request.Form["id"];
+			Client.Name = Request.Form["name"];
+			Client.Email = Request.Form["email"];
+			Client.Phone = Request.Form["phone"];
+			Client.Address = Request.Form["address"];
 
-			if (Client.name.Length == 0 || Client.email.Length == 0 ||
-			   Client.phone.Length == 0 || Client.address.Length == 0)
+			if (Client.Name.Length == 0 || Client.Email.Length == 0 ||
+			   Client.Phone.Length == 0 || Client.Address.Length == 0)
 			{
 				ErrorMessage = "All the fields are required";
 				return;
@@ -52,7 +52,7 @@ namespace ShowcaseApp.Pages.Clients
 
 			try
 			{
-				_clientService.UpdateClientAsync(Client.id, Client.name, Client.email, Client.phone, Client.address);
+				_clientService.UpdateClientAsync(Client.Id, Client.Name, Client.Email, Client.Phone, Client.Address);
 			}
 			catch (Exception ex)
 			{

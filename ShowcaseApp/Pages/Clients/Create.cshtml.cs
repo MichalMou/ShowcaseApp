@@ -7,12 +7,12 @@ using System.Data.SqlClient;
 
 namespace ShowcaseApp.Pages.Clients
 {
-    public class CreateModel : PageModel
+	public class CreateModel : PageModel
 	{
 		private readonly IClientService _clientService;
-		public Client client = new Client();
-		public String errorMessage = "";
-		public String successMessage = "";
+		public Client Client = new Client();
+		public String ErrorMessage = "";
+		public String SuccessMessage = "";
 
 		public CreateModel(IClientService clientService)
 		{
@@ -21,33 +21,33 @@ namespace ShowcaseApp.Pages.Clients
 
 		public async Task OnPost() 
 		{
-            client.name = Request.Form["name"];
-            client.email = Request.Form["email"];
-			client.phone = Request.Form["phone"];
-			client.address = Request.Form["address"];
+			Client.Name = Request.Form["name"];
+			Client.Email = Request.Form["email"];
+			Client.Phone = Request.Form["phone"];
+			Client.Address = Request.Form["address"];
 
-			if (client.name.Length == 0 || client.email.Length == 0 ||
-                client.phone.Length == 0 || client.address.Length == 0) 
+			if (Client.Name.Length == 0 || Client.Email.Length == 0 ||
+				Client.Phone.Length == 0 || Client.Address.Length == 0) 
 			{
-				errorMessage = "All the fields are required";
+				ErrorMessage = "All the fields are required";
 				return;
 			}
 
 			try
 			{
-				await _clientService.CreateClientAsync(client.name, client.phone, client.email, client.address);
+				await _clientService.CreateClientAsync(Client.Name, Client.Phone, Client.Email, Client.Address);
 			}
 			catch (Exception ex) 
 			{
-				errorMessage = ex.Message;
+				ErrorMessage = ex.Message;
 				return;  
 			}
 
-            client.name = "";
-            client.email = "";
-            client.phone = "";
-            client.address = "";
-			successMessage = "New User Added Correctly";
+			Client.Name = "";
+			Client.Email = "";
+			Client.Phone = "";
+			Client.Address = "";
+			SuccessMessage = "New User Added Correctly";
 
 			Response.Redirect("/Clients/Index");
 		}

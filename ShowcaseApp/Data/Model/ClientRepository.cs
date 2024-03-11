@@ -66,12 +66,12 @@ namespace ShowcaseApp.Data.Model
 						while (reader.Read())
 						{
 							Client client = new Client();
-							client.id = "" + reader.GetInt32(0);
-							client.name = reader.GetString(1);
-							client.email = reader.GetString(2);
-							client.phone = reader.GetString(3);
-							client.address = reader.GetString(4);
-							client.reg_dat = reader.GetDateTime(5).ToString();
+							client.Id = "" + reader.GetInt32(0);
+							client.Name = reader.GetString(1);
+							client.Email = reader.GetString(2);
+							client.Phone = reader.GetString(3);
+							client.Address = reader.GetString(4);
+							client.RegDate = reader.GetDateTime(5).ToString();
 
 							listClients.Add(client);
 						}
@@ -100,11 +100,11 @@ namespace ShowcaseApp.Data.Model
 					{
 						if (reader.Read())
 						{
-							client.id = "" + reader.GetInt32(0);
-							client.name = reader.GetString(1);
-							client.email = reader.GetString(2);
-							client.phone = reader.GetString(3);
-							client.address = reader.GetString(4);
+							client.Id = "" + reader.GetInt32(0);
+							client.Name = reader.GetString(1);
+							client.Email = reader.GetString(2);
+							client.Phone = reader.GetString(3);
+							client.Address = reader.GetString(4);
 						}
 					}
 				}

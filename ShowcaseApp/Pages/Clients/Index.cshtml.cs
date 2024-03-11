@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 
 namespace ShowcaseApp.Pages.Clients
 {
-    public class IndexModel : PageModel
+	public class IndexModel : PageModel
 	{
 		private readonly IClientService _clientService;
 		public IEnumerable<Client> ListClients { get; set; }
